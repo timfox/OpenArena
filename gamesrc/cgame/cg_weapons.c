@@ -1743,7 +1743,13 @@ void CG_AddPlayerWeapon( refEntity_t *parent, playerState_t *ps, centity_t *cent
 
 	VectorMA(gun.origin, lerped.origin[2], parent->axis[2], gun.origin);
 
-	MatrixMultiply(lerped.axis, ((refEntity_t *)parent)->axis, gun.axis);
+	{
+		float axis1[3][3], axis2[3][3], axis3[3][3];
+		memcpy(axis1, lerped.axis, sizeof(axis1));
+		memcpy(axis2, parent->axis, sizeof(axis2));
+		MatrixMultiply(axis1, axis2, axis3);
+		memcpy(gun.axis, axis3, sizeof(axis3));
+	}
 	gun.backlerp = parent->backlerp;
 
 	CG_AddWeaponWithPowerups( &gun, cent->currentState.powerups );

@@ -634,7 +634,8 @@ void Parse3DMatrix(char **buf_p, int z, int y, int x, float *m) {
 
 void Q_StrToLower(char *io_string) {
 	int i;
-	for (i = 0; i < strlen(io_string); i++) {
+	int len = (int)strlen(io_string);
+	for (i = 0; i < len; i++) {
 		io_string[i] = tolower(io_string[i]);
 	}
 }
@@ -919,7 +920,7 @@ void QDECL Com_sprintf(char *dest, int size, const char *fmt, ...) {
 	va_start(argptr, fmt);
 	len = Q_vsnprintf(bigbuffer, sizeof (bigbuffer), fmt, argptr);
 	va_end(argptr);
-	if (len >= sizeof ( bigbuffer)) {
+	if (len >= (int)sizeof ( bigbuffer)) {
 		Com_Error(ERR_FATAL, "Com_sprintf: overflowed bigbuffer");
 	}
 	if (len >= size) {
@@ -1199,8 +1200,9 @@ Com_CharIsOneOfCharset
  */
 static qboolean Com_CharIsOneOfCharset(char c, char *set) {
 	int i;
+	int len = (int)strlen(set);
 
-	for (i = 0; i < strlen(set); i++) {
+	for (i = 0; i < len; i++) {
 		if (set[ i ] == c)
 			return qtrue;
 	}

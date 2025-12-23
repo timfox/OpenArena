@@ -520,9 +520,13 @@ float Q_rsqrt( float number )
 }
 
 float Q_fabs( float f ) {
-	int tmp = * ( int * ) &f;
-	tmp &= 0x7FFFFFFF;
-	return * ( float * ) &tmp;
+	union {
+		float f;
+		int i;
+	} u;
+	u.f = f;
+	u.i &= 0x7FFFFFFF;
+	return u.f;
 }
 #endif
 

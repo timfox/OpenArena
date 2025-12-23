@@ -111,7 +111,7 @@ static qboolean CG_ParseAnimationFile(const char *filename, clientInfo_t *ci) {
 	if (len <= 0) {
 		return qfalse;
 	}
-	if (len >= sizeof ( text) - 1) {
+	if (len >= (int)sizeof ( text) - 1) {
 		CG_Printf("File %s too long\n", filename);
 		trap_FS_FCloseFile(f);
 		return qfalse;
@@ -405,7 +405,7 @@ static qboolean CG_ParseEyesFile(const char *filename, clientInfo_t *ci) {
 	if (len <= 0) {
 		return qfalse;
 	}
-	if (len >= sizeof ( text) - 1) {
+	if (len >= (int)sizeof ( text) - 1) {
 		CG_Printf("File %s too long\n", filename);
 		trap_FS_FCloseFile(f);
 		return qfalse;
@@ -2192,17 +2192,13 @@ static void CG_PlayerFloatSprite(centity_t *cent, qhandle_t shader) {
 // leilei - Print their name over their head. Through walls.
 static void CG_FloatName(centity_t *cent) {
 #ifdef MISSIONPACK
-	int rf;
-	int them;
-		clientInfo_t *ci;
-	refEntity_t ent;
 	float textsize;
-	int x, y, w, chaty, vx, vy, sx, sy, tx, ty, nx, ny;
-	int l, h, i;
+	int x, y, vx, vy, tx, ty;
+	int l, h;
 	vec4_t color;
 	vec3_t vp;
 	char *start;
-	vec3_t not;
+	vec3_t not = {0, 0, 0};
 	trace_t tr;
 
 	float scl = cgs.screenYScale; // OA3 only scales vertically 
@@ -2252,7 +2248,6 @@ static void CG_FloatName(centity_t *cent) {
 			}
 			linebuffer[l] = 0;
 	
-			w = CG_Text_Width(linebuffer, 0.25, 0);
 			h = CG_Text_Height(linebuffer, 0.25, 0);
 			vx = x;
 			vy = (cg.refdef.height - y);
@@ -2343,14 +2338,10 @@ static void CG_PlayerSprites(centity_t *cent) {
 }
 
 void CG_PlayerSpritesOverWorld(centity_t *cent) {
-	int team;
-
 	if (!cg.headon[ cent->currentState.clientNum ]){
 		CG_FloatName(cent);
 		cg.headon[ cent->currentState.clientNum ] = 1; // applied directly
 	}
-
-
 }
 
 /*

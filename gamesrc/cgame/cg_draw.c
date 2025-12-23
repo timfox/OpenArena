@@ -1379,7 +1379,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 	count = (numSortedTeamPlayers > 8) ? 8 : numSortedTeamPlayers;
 	for (i = 0; i < count; i++) {
 		ci = cgs.clientinfo + sortedTeamPlayers[i];
-		if (ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM]) {
+		if (ci->infoValid && ci->team == (team_t)cg.snap->ps.persistant[PERS_TEAM]) {
 			plyrs++;
 			len = CG_DrawStrlen(ci->name);
 			if (len > pwidth)
@@ -1440,7 +1440,7 @@ static float CG_DrawTeamOverlay(float y, qboolean right, qboolean upper) {
 
 	for (i = 0; i < count; i++) {
 		ci = cgs.clientinfo + sortedTeamPlayers[i];
-		if (ci->infoValid && ci->team == cg.snap->ps.persistant[PERS_TEAM]) {
+		if (ci->infoValid && ci->team == (team_t)cg.snap->ps.persistant[PERS_TEAM]) {
 
 			hcolor[0] = hcolor[1] = hcolor[2] = hcolor[3] = 1.0;
 
@@ -3630,17 +3630,13 @@ static void CG_Draw2D(stereoFrame_t stereoFrame) {
 	{	
 	int f;
 	centity_t	*cent;
-	vec3_t		angles;
-	vec3_t		origin;
-
-
 
 	for (f=0;f<MAX_CLIENTS;f++){
 		cent = &cg.headent[f];
-		if (cent);
+		if (cent) {
 			CG_PlayerSpritesOverWorld(cent);
 		}	
-	
+	}
 	}
 #endif
 
