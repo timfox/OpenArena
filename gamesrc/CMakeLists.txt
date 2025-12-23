@@ -160,9 +160,9 @@ target_compile_definitions(game_${ARCH_SUFFIX} PRIVATE QAGAME MISSIONPACK ARCH_S
 target_compile_definitions(cgame_${ARCH_SUFFIX} PRIVATE CGAME MISSIONPACK ARCH_STRING="${ARCH_SUFFIX}")
 target_compile_definitions(ui_${ARCH_SUFFIX} PRIVATE UI MISSIONPACK ARCH_STRING="${ARCH_SUFFIX}")
 
-set_target_properties(game_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "game${ARCH_SUFFIX}" PREFIX "")
-set_target_properties(cgame_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "cgame${ARCH_SUFFIX}" PREFIX "")
-set_target_properties(ui_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "ui${ARCH_SUFFIX}" PREFIX "")
+set_target_properties(game_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "game.${ARCH_SUFFIX}" PREFIX "")
+set_target_properties(cgame_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "cgame.${ARCH_SUFFIX}" PREFIX "")
+set_target_properties(ui_${ARCH_SUFFIX} PROPERTIES OUTPUT_NAME "ui.${ARCH_SUFFIX}" PREFIX "")
 
 if(MSVC)
     target_compile_options(game_${ARCH_SUFFIX} PRIVATE /W4)
