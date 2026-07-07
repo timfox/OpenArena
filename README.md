@@ -1,4 +1,4 @@
-# OpenArena gamecode
+# OpenArena-TF
 ![Build status](https://github.com/timfox/OpenArena/actions/workflows/main.yml/badge.svg)
 
 ## Description ##
