@@ -238,7 +238,7 @@ static void Main_MenuDraw( void )
 	UI_DrawString( 320, 400, "OpenArena(c) 2005-2018 OpenArena Team", UI_CENTER|UI_SMALLFONT, color );
 	UI_DrawString( 320, 414, "OpenArena comes with ABSOLUTELY NO WARRANTY; this is free software", UI_CENTER|UI_SMALLFONT, color );
 	UI_DrawString( 320, 428, "and you are welcome to redistribute it under certain conditions;", UI_CENTER|UI_SMALLFONT, color );
-	UI_DrawString( 320, 444, "read COPYING for details.", UI_CENTER|UI_SMALLFONT, color );
+	UI_DrawString( 320, 444, "read LICENSE for details.", UI_CENTER|UI_SMALLFONT, color );
 
 	//Draw version.
 	UI_DrawString( 640-40, 480-14, "^7" OA_VERSION, UI_SMALLFONT, color );

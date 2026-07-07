@@ -9,7 +9,7 @@ GENERAL NOTES
 LICENSE
 =======
 
-See COPYING.txt for the GNU GENERAL PUBLIC LICENSE
+See LICENSE for the GNU GENERAL PUBLIC LICENSE
 
 Some source code in this release is not covered by the GPL:
 

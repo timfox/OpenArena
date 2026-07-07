@@ -11,16 +11,40 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${OA_OUTPUT_DIR}/vm")
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${OA_OUTPUT_DIR}/vm")
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${OA_OUTPUT_DIR}/vm")
 
-# Engine headers live three levels up
-get_filename_component(ENGINE_ROOT "${CMAKE_SOURCE_DIR}/../../.." ABSOLUTE)
-set(ENGINE_INCLUDE_DIRS
-    "${ENGINE_ROOT}/src/qcommon"
-    "${ENGINE_ROOT}/src/game"
-    "${ENGINE_ROOT}/src/cgame"
-    "${ENGINE_ROOT}/src/ui"
-    "${ENGINE_ROOT}/src/renderercommon"
-    "${ENGINE_ROOT}/src/client"
-)
+# Allow callers to point at an explicit engine checkout.
+set(ENGINE_ROOT "" CACHE PATH "Path to an id Tech 3 engine checkout")
+if(NOT ENGINE_ROOT)
+    get_filename_component(ENGINE_ROOT "${CMAKE_SOURCE_DIR}/../../.." ABSOLUTE)
+endif()
+
+set(ENGINE_INCLUDE_DIRS "")
+
+function(add_engine_include_dir dir)
+    if(EXISTS "${dir}")
+        list(APPEND ENGINE_INCLUDE_DIRS "${dir}")
+        set(ENGINE_INCLUDE_DIRS "${ENGINE_INCLUDE_DIRS}" PARENT_SCOPE)
+    endif()
+endfunction()
+
+# Stock / ioq3-style trees.
+add_engine_include_dir("${ENGINE_ROOT}/src/qcommon")
+add_engine_include_dir("${ENGINE_ROOT}/src/game")
+add_engine_include_dir("${ENGINE_ROOT}/src/cgame")
+add_engine_include_dir("${ENGINE_ROOT}/src/ui")
+add_engine_include_dir("${ENGINE_ROOT}/src/renderercommon")
+add_engine_include_dir("${ENGINE_ROOT}/src/client")
+
+# timfox/idtech3 fork layout.
+add_engine_include_dir("${ENGINE_ROOT}/engine/core")
+add_engine_include_dir("${ENGINE_ROOT}/runtime/game")
+add_engine_include_dir("${ENGINE_ROOT}/runtime/cgame")
+add_engine_include_dir("${ENGINE_ROOT}/runtime/ui")
+add_engine_include_dir("${ENGINE_ROOT}/runtime/shared")
+add_engine_include_dir("${ENGINE_ROOT}/renderers/common")
+
+if(NOT ENGINE_INCLUDE_DIRS)
+    message(WARNING "No engine include directories were found under ENGINE_ROOT='${ENGINE_ROOT}'. Building with local headers only.")
+endif()
 
 message(STATUS "ENGINE_ROOT: ${ENGINE_ROOT}")
 message(STATUS "Library output: ${OA_OUTPUT_DIR}/vm")
@@ -35,19 +59,23 @@ include_directories(${ENGINE_INCLUDE_DIRS})
 
 add_compile_options(-fPIC -fvisibility=hidden -Wall -Wextra -Wno-unused-parameter)
 
-if(UNIX)
+set(ARCH_SUFFIX "" CACHE STRING "Override the native module suffix used in output names")
+
+if(NOT ARCH_SUFFIX AND UNIX)
     if(CMAKE_SYSTEM_PROCESSOR MATCHES "x86_64|AMD64")
         set(ARCH_SUFFIX "x86_64")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "i386|i686|x86")
         set(ARCH_SUFFIX "i386")
-    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "aarch64")
+        set(ARCH_SUFFIX "aarch64")
+    elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64")
         set(ARCH_SUFFIX "arm64")
     elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "arm")
         set(ARCH_SUFFIX "arm")
     endif()
-elseif(WIN32)
+elseif(NOT ARCH_SUFFIX AND WIN32)
     if(CMAKE_SIZEOF_VOID_P EQUAL 8)
-        set(ARCH_SUFFIX "x64")
+        set(ARCH_SUFFIX "x86_64")
     else()
         set(ARCH_SUFFIX "x86")
     endif()
