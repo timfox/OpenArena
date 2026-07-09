@@ -31,6 +31,16 @@ static	vec3_t	muzzle;
 
 #define NUM_NAILSHOTS 15
 
+static gentity_t *G_TraceEntity( const trace_t *tr, const char *context )
+{
+	if ( tr->entityNum < 0 || tr->entityNum >= MAX_GENTITIES ) {
+		G_Printf( "%s: ignoring invalid trace entityNum %d\n", context, tr->entityNum );
+		return NULL;
+	}
+
+	return &g_entities[ tr->entityNum ];
+}
+
 /*
 ================
 G_BounceProjectile
@@ -92,7 +102,10 @@ qboolean CheckGauntletAttack( gentity_t *ent )
 		return qfalse;
 	}
 
-	traceEnt = &g_entities[ tr.entityNum ];
+	traceEnt = G_TraceEntity( &tr, "CheckGauntletAttack" );
+	if ( !traceEnt ) {
+		return qfalse;
+	}
 
 	// send blood impact
 	if ( traceEnt->takedamage && traceEnt->client ) {
@@ -248,7 +261,10 @@ void Bullet_Fire (gentity_t *ent, float spread, int damage )
 			return;
 		}
 
-		traceEnt = &g_entities[ tr.entityNum ];
+		traceEnt = G_TraceEntity( &tr, "Bullet_Fire" );
+		if ( !traceEnt ) {
+			return;
+		}
 
 		// snap the endpos to integers, but nudged towards the line
 		SnapVectorTowards( tr.endpos, muzzle );
@@ -355,10 +371,13 @@ qboolean ShotgunPellet( vec3_t start, vec3_t end, gentity_t *ent )
 	VectorCopy( end, tr_end );
 	for (i = 0; i < 10; i++) {
 		trap_Trace (&tr, tr_start, NULL, NULL, tr_end, passent, MASK_SHOT);
-		traceEnt = &g_entities[ tr.entityNum ];
-
 		// send bullet impact
 		if (  tr.surfaceFlags & SURF_NOIMPACT ) {
+			return qfalse;
+		}
+
+		traceEnt = G_TraceEntity( &tr, "ShotgunPellet" );
+		if ( !traceEnt ) {
 			return qfalse;
 		}
 
@@ -756,7 +775,10 @@ void Weapon_LightningFire( gentity_t *ent )
 			return;
 		}
 
-		traceEnt = &g_entities[ tr.entityNum ];
+		traceEnt = G_TraceEntity( &tr, "Weapon_LightningFire" );
+		if ( !traceEnt ) {
+			return;
+		}
 
 		if ( traceEnt->takedamage) {
 			if ( traceEnt->client && traceEnt->client->invulnerabilityTime > level.time ) {

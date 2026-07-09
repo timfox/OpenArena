@@ -399,12 +399,14 @@ void trap_SnapVector( float *v ) {
 
 // leilei - particles!
 void	trap_R_LFX_ParticleEffect( int effect, const vec3_t origin, const vec3_t velocity ) {
-	syscall( CG_R_LFX_PARTICLEEFFECT, effect, origin, velocity );
+	(void)effect;
+	(void)origin;
+	(void)velocity;
 }
 
 // leilei - get viewmatrix from value
 void	trap_R_GetViewPosition( vec3_t point ) {
-	 syscall( CG_R_VIEWPOSITION, point );
+	VectorClear( point );
 }
 
 // this returns a handle.  arg0 is the name in the format "idlogo.roq", set arg1 to NULL, alteredstates to qfalse (do not alter gamestate)

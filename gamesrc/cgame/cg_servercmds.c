@@ -348,7 +348,8 @@ and whenever the server updates any serverinfo flagged cvars
 */
 void CG_ParseServerinfo( void ) {
 	const char	*info;
-	char	*mapname;
+	const char	*mapname;
+	char		mapnameCvar[MAX_QPATH];
 
 	info = CG_ConfigString( CS_SERVERINFO );
 	cgs.gametype = atoi( Info_ValueForKey( info, "g_gametype" ) );
@@ -372,7 +373,15 @@ void CG_ParseServerinfo( void ) {
 	cgs.lms_mode = atoi( Info_ValueForKey( info, "g_lms_mode" ) );
 	cgs.altExcellent = atoi( Info_ValueForKey( info, "g_altExcellent" ) );
 	mapname = Info_ValueForKey( info, "mapname" );
-	Com_sprintf( cgs.mapname, sizeof( cgs.mapname ), "maps/%s.bsp", mapname );
+	if ( !mapname || !mapname[0] ) {
+		trap_Cvar_VariableStringBuffer( "mapname", mapnameCvar, sizeof( mapnameCvar ) );
+		mapname = mapnameCvar;
+	}
+	if ( mapname && mapname[0] ) {
+		Com_sprintf( cgs.mapname, sizeof( cgs.mapname ), "maps/%s.bsp", mapname );
+	} else {
+		cgs.mapname[0] = '\0';
+	}
 	Q_strncpyz( cgs.redTeam, Info_ValueForKey( info, "g_redTeam" ), sizeof(cgs.redTeam) );
 	trap_Cvar_Set("g_redTeam", cgs.redTeam);
 	Q_strncpyz( cgs.blueTeam, Info_ValueForKey( info, "g_blueTeam" ), sizeof(cgs.blueTeam) );

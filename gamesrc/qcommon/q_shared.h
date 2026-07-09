@@ -28,10 +28,18 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 // A user mod should never modify this file
 
 //#ifdef STANDALONE
+  #ifndef PRODUCT_NAME
   #define PRODUCT_NAME			"ioq3+oa"
+  #endif
+  #ifndef BASEGAME
   #define BASEGAME			"baseoa"
+  #endif
+  #ifndef CLIENT_WINDOW_TITLE
   #define CLIENT_WINDOW_TITLE     	"OpenArena"
+  #endif
+  #ifndef CLIENT_WINDOW_MIN_TITLE
   #define CLIENT_WINDOW_MIN_TITLE 	"OA"
+  #endif
 /*#else
   #define PRODUCT_NAME			"ioq3"
   #define BASEGAME			"baseq3"
@@ -120,6 +128,7 @@ typedef int intptr_t;
 #else
 
 #include <assert.h>
+#include <stdbool.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -163,7 +172,13 @@ typedef int intptr_t;
 
 typedef unsigned char 		byte;
 
-typedef enum {qfalse, qtrue}	qboolean;
+#ifdef Q3_VM
+typedef enum { qfalse = 0, qtrue } qboolean;
+#else
+typedef bool qboolean;
+#define qtrue true
+#define qfalse false
+#endif
 
 typedef union {
 	float f;
@@ -983,7 +998,11 @@ typedef enum {
 #define	MAX_CLIENTS			64		// absolute limit
 #define MAX_LOCATIONS		64
 
+#ifdef IDTECH3_FORK_COMPAT
+#define	GENTITYNUM_BITS		13		// timfox/idtech3 native ABI widened entity numbers
+#else
 #define	GENTITYNUM_BITS		10		// don't need to send any more
+#endif
 #define	MAX_GENTITIES		(1<<GENTITYNUM_BITS)
 
 // entitynums are communicated with GENTITY_BITS, so any reserved
@@ -994,11 +1013,19 @@ typedef enum {
 #define	ENTITYNUM_MAX_NORMAL	(MAX_GENTITIES-2)
 
 
+#ifdef IDTECH3_FORK_COMPAT
+#define	MODELNUM_BITS		14		// timfox/idtech3 widened model indexes
+#define	SOUNDNUM_BITS		12		// timfox/idtech3 widened sound indexes
+#define	MAX_MODELS			8196
+#define	MAX_SOUNDS			4096
+#define	MAX_CONFIGSTRINGS	32768
+#define	MAX_GAMESTATE_CHARS	(2*1024*1024)
+#else
 #define	MAX_MODELS			256		// these are sent over the net as 8 bits
 #define	MAX_SOUNDS			256		// so they cannot be blindly increased
-
-
 #define	MAX_CONFIGSTRINGS	1024
+#define	MAX_GAMESTATE_CHARS	16000
+#endif
 
 // these are the only configstrings that the system reserves, all the
 // other ones are strictly for servergame to clientgame communication
@@ -1006,8 +1033,6 @@ typedef enum {
 #define	CS_SYSTEMINFO		1		// an info string for server system to client system configuration (timescale, etc)
 
 #define	RESERVED_CONFIGSTRINGS	2	// game can't modify below this, only the system can
-
-#define	MAX_GAMESTATE_CHARS	16000
 typedef struct {
 	int			stringOffsets[MAX_CONFIGSTRINGS];
 	char		stringData[MAX_GAMESTATE_CHARS];

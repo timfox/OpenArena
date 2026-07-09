@@ -22,6 +22,7 @@ Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 //
 // cg_main.c -- initialization and primary entry point for cgame
 #include "cg_local.h"
+#include "cg_compat_math.h"
 
 #ifdef MISSIONPACK
 #include "../ui/ui_shared.h"
@@ -2442,6 +2443,17 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 
 	// check version
 	s = CG_ConfigString(CS_GAME_VERSION);
+	if ( !s || !s[0] ) {
+		const char *serverinfo;
+		const char *gamename;
+		static char derivedGameVersion[32];
+
+		serverinfo = CG_ConfigString( CS_SERVERINFO );
+		gamename = Info_ValueForKey( serverinfo, "gamename" );
+		CG_BuildExpectedGameVersion( gamename, BASEGAME,
+			derivedGameVersion, sizeof( derivedGameVersion ) );
+		s = derivedGameVersion;
+	}
 	if (!strequals(s, GAME_VERSION)) {
 		CG_Error("Client/Server game mismatch: %s/%s", GAME_VERSION, s);
 	}
@@ -2450,6 +2462,9 @@ void CG_Init(int serverMessageNum, int serverCommandSequence, int clientNum) {
 	cgs.levelStartTime = atoi(s);
 
 	CG_ParseServerinfo();
+	if ( !cgs.mapname[0] ) {
+		CG_Error( "CG_Init: missing mapname in serverinfo and cvar state" );
+	}
 
 	// load the new map
 	// load the new map
@@ -2681,4 +2696,3 @@ void CG_FairCvars() {
 
 	do_vid_restart = qtrue;
 }
-

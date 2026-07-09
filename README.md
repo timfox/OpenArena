@@ -20,6 +20,16 @@ vm/cgame.<arch>.so
 vm/ui.<arch>.so
 ```
 
+Native `cgame` also expects the loose HUD/menu text files in `ui/`. When you
+stage this into an engine checkout, include:
+
+```text
+openarena/ui/hud.txt
+openarena/ui/hud2.txt
+openarena/ui/ingame.txt
+openarena/ui/menus.txt
+```
+
 `ENGINE_ROOT` is optional when this repository already lives inside the
 engine's mod tree. The CMake build detects both classic `src/...` layouts and
 the `timfox/idtech3` `engine/core` plus `runtime/...` layout.
